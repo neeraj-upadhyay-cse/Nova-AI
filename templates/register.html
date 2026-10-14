@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Create Account - NovaAI</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+    <div class="auth-page">
+
+        <div class="auth-card">
+
+
+            <!-- LOGO -->
+
+            <div class="auth-logo">
+
+                <span>✦</span>
+
+                NovaAI
+
+            </div>
+
+
+            <!-- HEADING -->
+
+            <h1>
+                Create Account
+            </h1>
+
+
+            <p class="auth-subtitle">
+
+                Create your account to get started
+
+            </p>
+
+
+            <!-- REGISTER FORM -->
+
+            <form
+                id="registerForm"
+                onsubmit="handleRegister(event)"
+            >
+
+
+                <!-- NAME -->
+
+                <div class="form-group">
+
+                    <label for="name">
+                        Full Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        placeholder="Enter your name"
+                        autocomplete="name"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- EMAIL -->
+
+                <div class="form-group">
+
+                    <label for="email">
+                        Email Address
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Enter your email"
+                        autocomplete="email"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- PASSWORD -->
+
+                <div class="form-group">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Create a password"
+                        minlength="6"
+                        autocomplete="new-password"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- CONFIRM PASSWORD -->
+
+                <div class="form-group">
+
+                    <label for="confirmPassword">
+                        Confirm Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        placeholder="Confirm your password"
+                        minlength="6"
+                        autocomplete="new-password"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- REGISTER BUTTON -->
+
+                <button
+                    type="submit"
+                    class="auth-btn"
+                    id="registerButton"
+                >
+
+                    Create Account
+
+                </button>
+
+
+                <!-- MESSAGE -->
+
+                <div
+                    id="registerMessage"
+                    class="auth-message"
+                ></div>
+
+
+            </form>
+
+
+            <!-- LOGIN LINK -->
+
+            <div class="auth-switch">
+
+                <span>
+                    Already have an account?
+                </span>
+
+                <a href="/login">
+                    Login
+                </a>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+    <!-- ==========================================
+         REGISTER JAVASCRIPT
+    =========================================== -->
+
+    <script>
+
+        async function handleRegister(event) {
+
+            event.preventDefault();
+
+
+            // ======================================
+            // GET FORM VALUES
+            // ======================================
+
+            const name =
+                document.getElementById(
+                    "name"
+                ).value.trim();
+
+
+            const email =
+                document.getElementById(
+                    "email"
+                ).value.trim();
+
+
+            const password =
+                document.getElementById(
+                    "password"
+                ).value;
+
+
+            const confirmPassword =
+                document.getElementById(
+                    "confirmPassword"
+                ).value;
+
+
+            const message =
+                document.getElementById(
+                    "registerMessage"
+                );
+
+
+            const registerButton =
+                document.getElementById(
+                    "registerButton"
+                );
+
+
+            // ======================================
+            // NAME VALIDATION
+            // ======================================
+
+            if (!name) {
+
+                message.textContent =
+                    "Please enter your name.";
+
+                return;
+
+            }
+
+
+            // ======================================
+            // EMAIL VALIDATION
+            // ======================================
+
+            if (!email) {
+
+                message.textContent =
+                    "Please enter your email.";
+
+                return;
+
+            }
+
+
+            // ======================================
+            // PASSWORD VALIDATION
+            // ======================================
+
+            if (password.length < 6) {
+
+                message.textContent =
+                    "Password must be at least 6 characters.";
+
+                return;
+
+            }
+
+
+            // ======================================
+            // CONFIRM PASSWORD
+            // ======================================
+
+            if (
+                password !==
+                confirmPassword
+            ) {
+
+                message.textContent =
+                    "Passwords do not match.";
+
+                return;
+
+            }
+
+
+            // ======================================
+            // SHOW LOADING
+            // ======================================
+
+            registerButton.disabled = true;
+
+            registerButton.textContent =
+                "Creating Account...";
+
+            message.textContent = "";
+
+
+            try {
+
+                // ==================================
+                // CREATE FORM DATA
+                // ==================================
+
+                const formData =
+                    new FormData();
+
+                formData.append(
+                    "name",
+                    name
+                );
+
+                formData.append(
+                    "email",
+                    email
+                );
+
+                formData.append(
+                    "password",
+                    password
+                );
+
+                formData.append(
+                    "confirmPassword",
+                    confirmPassword
+                );
+
+
+                // ==================================
+                // SEND TO FLASK
+                // ==================================
+
+                const response =
+                    await fetch(
+                        "/register",
+                        {
+                            method: "POST",
+                            body: formData
+                        }
+                    );
+
+
+                // ==================================
+                // SERVER RESPONSE
+                // ==================================
+
+                const data =
+                    await response.json();
+
+
+                // ==================================
+                // REGISTRATION FAILED
+                // ==================================
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    message.textContent =
+                        data.message ||
+                        "Registration failed. Please try again.";
+
+                    return;
+
+                }
+
+
+                // ==================================
+                // REGISTRATION SUCCESS
+                // ==================================
+
+                message.textContent =
+                    "Account created successfully. Opening NovaAI...";
+
+
+                // ==================================
+                // REDIRECT TO NOVAAI
+                // ==================================
+
+                window.location.href =
+                    data.redirect || "/";
+
+
+            } catch (error) {
+
+                console.error(
+                    "Registration Error:",
+                    error
+                );
+
+
+                message.textContent =
+                    "Unable to connect to NovaAI server.";
+
+            } finally {
+
+                // ==================================
+                // RESTORE BUTTON
+                // ==================================
+
+                registerButton.disabled = false;
+
+                registerButton.textContent =
+                    "Create Account";
+
+            }
+
+        }
+
+    </script>
+
+
+</body>
+
+</html>

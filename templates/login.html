@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Login - NovaAI</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+
+<body class="auth-body">
+
+    <!-- ==========================================
+         AI BACKGROUND
+    =========================================== -->
+
+    <div class="ai-background">
+
+        <div class="ai-grid"></div>
+
+        <div class="ai-glow ai-glow-one"></div>
+
+        <div class="ai-glow ai-glow-two"></div>
+
+        <div class="ai-orb ai-orb-one"></div>
+
+        <div class="ai-orb ai-orb-two"></div>
+
+        <div class="ai-lines">
+
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==========================================
+         AUTH PAGE
+    =========================================== -->
+
+    <div class="auth-page">
+
+
+        <!-- ======================================
+             NOVAAI BRAND
+        ======================================= -->
+
+        <div class="auth-brand">
+
+            <div class="auth-brand-icon">
+                ✦
+            </div>
+
+            <div class="auth-brand-name">
+                NovaAI
+            </div>
+
+            <div class="auth-brand-tagline">
+                Intelligent conversations. Reimagined.
+            </div>
+
+        </div>
+
+
+        <!-- ======================================
+             LOGIN CARD
+        ======================================= -->
+
+        <div class="auth-card">
+
+
+            <!-- CARD LOGO -->
+
+            <div class="auth-logo">
+
+                <span>✦</span>
+
+                NovaAI
+
+            </div>
+
+
+            <!-- HEADING -->
+
+            <h1>
+                Welcome Back
+            </h1>
+
+
+            <p class="auth-subtitle">
+
+                Login to continue using NovaAI
+
+            </p>
+
+
+            <!-- ==================================
+                 LOGIN FORM
+            =================================== -->
+
+            <form
+                id="loginForm"
+                onsubmit="handleLogin(event)"
+            >
+
+
+                <!-- EMAIL -->
+
+                <div class="form-group">
+
+                    <label for="email">
+                        Email Address
+                    </label>
+
+                    <div class="auth-input-wrapper">
+
+                        <span class="auth-input-icon">
+                            @
+                        </span>
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="Enter your email"
+                            autocomplete="email"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- PASSWORD -->
+
+                <div class="form-group">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <div class="auth-input-wrapper">
+
+                        <span class="auth-input-icon">
+                            ●
+                        </span>
+
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            onclick="togglePassword()"
+                            aria-label="Show password"
+                        >
+                            👁
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ==================================
+                     OPTIONS
+                =================================== -->
+
+                <div class="form-options">
+
+
+                    <label class="remember-me">
+
+                        <input
+                            type="checkbox"
+                            id="remember"
+                        >
+
+                        <span>
+                            Remember me
+                        </span>
+
+                    </label>
+
+
+                    <a
+                        href="#"
+                        onclick="forgotPassword(event)"
+                    >
+                        Forgot password?
+                    </a>
+
+
+                </div>
+
+
+                <!-- ==================================
+                     LOGIN BUTTON
+                =================================== -->
+
+                <button
+                    type="submit"
+                    class="auth-btn"
+                    id="loginButton"
+                >
+
+                    <span>
+                        Login
+                    </span>
+
+                    <span class="auth-btn-arrow">
+                        →
+                    </span>
+
+                </button>
+
+
+                <!-- MESSAGE -->
+
+                <div
+                    id="loginMessage"
+                    class="auth-message"
+                ></div>
+
+
+            </form>
+
+
+            <!-- ==================================
+                 REGISTER
+            =================================== -->
+
+            <div class="auth-divider">
+
+                <span>
+                    OR
+                </span>
+
+            </div>
+
+
+            <div class="auth-switch">
+
+                <span>
+                    Don't have an account?
+                </span>
+
+                <a href="/register">
+                    Create Account
+                </a>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ======================================
+             FOOTER
+        ======================================= -->
+
+        <div class="auth-footer">
+
+            <span>
+                ✦
+            </span>
+
+            Powered by NovaAI
+
+        </div>
+
+
+    </div>
+
+
+    <!-- ==========================================
+         LOGIN JAVASCRIPT
+    =========================================== -->
+
+    <script>
+
+
+        // ==========================================
+        // LOGIN
+        // ==========================================
+
+        async function handleLogin(event) {
+
+            event.preventDefault();
+
+
+            const email =
+                document.getElementById(
+                    "email"
+                ).value.trim();
+
+
+            const password =
+                document.getElementById(
+                    "password"
+                ).value;
+
+
+            const message =
+                document.getElementById(
+                    "loginMessage"
+                );
+
+
+            const loginButton =
+                document.getElementById(
+                    "loginButton"
+                );
+
+
+            // ======================================
+            // VALIDATION
+            // ======================================
+
+            if (!email || !password) {
+
+                message.textContent =
+                    "Please enter email and password.";
+
+                message.className =
+                    "auth-message error";
+
+                return;
+
+            }
+
+
+            // ======================================
+            // LOADING
+            // ======================================
+
+            loginButton.disabled = true;
+
+            loginButton.innerHTML =
+                `
+                    <span>
+                        Logging in...
+                    </span>
+
+                    <span class="auth-spinner"></span>
+                `;
+
+            message.textContent = "";
+
+            message.className =
+                "auth-message";
+
+
+            try {
+
+
+                // ==================================
+                // FORM DATA
+                // ==================================
+
+                const formData =
+                    new FormData();
+
+
+                formData.append(
+                    "email",
+                    email
+                );
+
+
+                formData.append(
+                    "password",
+                    password
+                );
+
+
+                // ==================================
+                // SEND REQUEST
+                // ==================================
+
+                const response =
+                    await fetch(
+                        "/login",
+                        {
+                            method: "POST",
+                            body: formData
+                        }
+                    );
+
+
+                // ==================================
+                // SERVER RESPONSE
+                // ==================================
+
+                const data =
+                    await response.json();
+
+
+                // ==================================
+                // LOGIN FAILED
+                // ==================================
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    message.textContent =
+                        data.message ||
+                        "Login failed. Please try again.";
+
+                    message.className =
+                        "auth-message error";
+
+                    return;
+
+                }
+
+
+                // ==================================
+                // LOGIN SUCCESS
+                // ==================================
+
+                message.textContent =
+                    "Login successful. Opening NovaAI...";
+
+                message.className =
+                    "auth-message success";
+
+
+                // ==================================
+                // REDIRECT
+                // ==================================
+
+                setTimeout(
+                    function () {
+
+                        window.location.href =
+                            data.redirect || "/";
+
+                    },
+                    500
+                );
+
+
+            } catch (error) {
+
+
+                console.error(
+                    "Login Error:",
+                    error
+                );
+
+
+                message.textContent =
+                    "Unable to connect to NovaAI server.";
+
+                message.className =
+                    "auth-message error";
+
+
+            } finally {
+
+
+                // ==================================
+                // RESTORE BUTTON
+                // ==================================
+
+                loginButton.disabled = false;
+
+                loginButton.innerHTML =
+                    `
+                        <span>
+                            Login
+                        </span>
+
+                        <span class="auth-btn-arrow">
+                            →
+                        </span>
+                    `;
+
+            }
+
+        }
+
+
+        // ==========================================
+        // SHOW / HIDE PASSWORD
+        // ==========================================
+
+        function togglePassword() {
+
+            const password =
+                document.getElementById(
+                    "password"
+                );
+
+            const button =
+                document.querySelector(
+                    ".password-toggle"
+                );
+
+
+            if (
+                password.type ===
+                "password"
+            ) {
+
+                password.type =
+                    "text";
+
+                button.textContent =
+                    "🙈";
+
+            } else {
+
+                password.type =
+                    "password";
+
+                button.textContent =
+                    "👁";
+
+            }
+
+        }
+
+
+        // ==========================================
+        // FORGOT PASSWORD
+        // ==========================================
+
+        function forgotPassword(event) {
+
+            event.preventDefault();
+
+
+            alert(
+                "Password recovery will be added later."
+            );
+
+        }
+
+
+    </script>
+
+
+</body>
+
+</html>

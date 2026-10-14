@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>NovaAI</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+
+<div class="app">
+
+
+    <!-- ==========================================
+         SIDEBAR
+    =========================================== -->
+
+    <aside class="sidebar">
+
+
+        <!-- LOGO -->
+
+        <div class="logo">
+
+            <span>✦</span>
+
+            NovaAI
+
+        </div>
+
+
+        <!-- NEW CHAT -->
+
+        <button
+            class="new-chat"
+            type="button"
+            onclick="newChat()"
+        >
+
+            + New Chat
+
+        </button>
+
+
+        <!-- RECENT CHATS -->
+
+        <div class="sidebar-title">
+
+            Recent Chats
+
+        </div>
+
+
+        <div
+            id="chatList"
+            class="chat-list"
+        ></div>
+
+
+        <!-- SIDEBAR BOTTOM -->
+
+        <div class="sidebar-bottom">
+
+
+            <!-- SETTINGS -->
+
+            <button
+                class="sidebar-option"
+                type="button"
+                onclick="openSettings()"
+            >
+
+                ⚙
+
+                <span>
+                    Settings
+                </span>
+
+            </button>
+
+
+            <!-- PROFILE -->
+
+            <button
+                class="sidebar-option"
+                type="button"
+                onclick="openProfile()"
+            >
+
+                👤
+
+                <span>
+                    Profile
+                </span>
+
+            </button>
+
+
+            <!-- LOGOUT -->
+
+            <button
+                class="sidebar-option logout-option"
+                type="button"
+                onclick="logoutUser()"
+            >
+
+                ⇥
+
+                <span>
+                    Logout
+                </span>
+
+            </button>
+
+
+        </div>
+
+
+    </aside>
+
+
+    <!-- ==========================================
+         MAIN
+    =========================================== -->
+
+    <main class="main">
+
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+            <div>
+
+                <h2>
+                    NovaAI
+                </h2>
+
+                <p>
+                    AI Assistant
+                </p>
+
+            </div>
+
+
+            <div class="status">
+
+                <span></span>
+
+                Online
+
+            </div>
+
+        </header>
+
+
+        <!-- ======================================
+             MESSAGES
+        ======================================= -->
+
+        <section
+            id="messages"
+            class="messages"
+        >
+
+
+            <!-- WELCOME -->
+
+            <div class="welcome">
+
+
+                <div class="nova-icon">
+
+                    ✦
+
+                </div>
+
+
+                <h1>
+
+                    How can I help you today?
+
+                </h1>
+
+
+                <p>
+
+                    Ask NovaAI anything.
+                    You can start a conversation below.
+
+                </p>
+
+
+                <!-- SUGGESTIONS -->
+
+                <div class="suggestions">
+
+
+                    <button
+                        type="button"
+                        onclick="useSuggestion(
+                            'Explain Java in simple words'
+                        )"
+                    >
+
+                        Explain Java
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        onclick="useSuggestion(
+                            'Give me a Python project idea'
+                        )"
+                    >
+
+                        Python Project
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        onclick="useSuggestion(
+                            'Help me learn DSA'
+                        )"
+                    >
+
+                        Learn DSA
+
+                    </button>
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+        <!-- ======================================
+             INPUT
+        ======================================= -->
+
+        <div class="input-area">
+
+
+            <div class="input-box">
+
+
+                <!-- IMAGE INPUT -->
+
+                <input
+                    type="file"
+                    id="imageInput"
+                    accept="image/*"
+                    hidden
+                >
+
+
+                <!-- ATTACH -->
+
+                <button
+                    class="attach-btn"
+                    id="attachBtn"
+                    type="button"
+                    title="Attach image"
+                >
+
+                    +
+
+                </button>
+
+
+                <!-- TEXT -->
+
+                <textarea
+                    id="userInput"
+                    placeholder="Message NovaAI..."
+                    rows="1"
+                    onkeydown="handleKey(event)"
+                ></textarea>
+
+
+                <!-- SEND -->
+
+                <button
+                    class="send-btn"
+                    type="button"
+                    onclick="sendMessage()"
+                >
+
+                    ➤
+
+                </button>
+
+
+            </div>
+
+
+            <!-- IMAGE PREVIEW -->
+
+            <div
+                id="imagePreview"
+                class="image-preview"
+                style="display: none;"
+            >
+
+                <div class="preview-container">
+
+
+                    <img
+                        id="previewImage"
+                        src=""
+                        alt="Selected image"
+                    >
+
+
+                    <button
+                        id="removeImageBtn"
+                        class="remove-image"
+                        type="button"
+                        title="Remove image"
+                    >
+
+                        ×
+
+                    </button>
+
+
+                </div>
+
+            </div>
+
+
+            <!-- DISCLAIMER -->
+
+            <p class="disclaimer">
+
+                NovaAI can make mistakes.
+                Check important information.
+
+            </p>
+
+
+        </div>
+
+
+    </main>
+
+
+</div>
+
+
+<!-- ==========================================
+     PROFILE MODAL
+=========================================== -->
+
+<div
+    id="profileModal"
+    class="nova-modal-overlay"
+    onclick="closeModalOnOverlay(event, 'profileModal')"
+>
+
+
+    <div
+        class="nova-modal"
+        onclick="event.stopPropagation()"
+    >
+
+
+        <div class="nova-modal-header">
+
+            <h2>
+                Profile
+            </h2>
+
+
+            <button
+                class="nova-close"
+                type="button"
+                onclick="closeModal('profileModal')"
+            >
+
+                ×
+
+            </button>
+
+        </div>
+
+
+        <div
+            id="profileAvatar"
+            class="profile-avatar"
+        >
+
+            N
+
+        </div>
+
+
+        <div
+            id="profileName"
+            class="profile-name"
+        >
+
+            Loading...
+
+        </div>
+
+
+        <div
+            id="profileEmail"
+            class="profile-email"
+        >
+
+            Loading...
+
+        </div>
+
+
+        <div class="profile-status">
+
+            ● Account Active
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<!-- ==========================================
+     SETTINGS MODAL
+=========================================== -->
+
+<div
+    id="settingsModal"
+    class="nova-modal-overlay"
+    onclick="closeModalOnOverlay(event, 'settingsModal')"
+>
+
+
+    <div
+        class="nova-modal"
+        onclick="event.stopPropagation()"
+    >
+
+
+        <div class="nova-modal-header">
+
+            <h2>
+                Settings
+            </h2>
+
+
+            <button
+                class="nova-close"
+                type="button"
+                onclick="closeModal('settingsModal')"
+            >
+
+                ×
+
+            </button>
+
+        </div>
+
+
+        <!-- ENTER TO SEND -->
+
+        <div class="settings-item">
+
+
+            <div class="settings-info">
+
+                <strong>
+                    Enter to send
+                </strong>
+
+                <span>
+                    Press Enter to send a message.
+                </span>
+
+            </div>
+
+
+            <label class="nova-switch">
+
+                <input
+                    type="checkbox"
+                    id="enterToSendToggle"
+                    checked
+                    onchange="saveSettings()"
+                >
+
+                <span class="nova-slider"></span>
+
+            </label>
+
+
+        </div>
+
+
+        <!-- COMPACT LAYOUT -->
+
+        <div class="settings-item">
+
+
+            <div class="settings-info">
+
+                <strong>
+                    Compact layout
+                </strong>
+
+                <span>
+                    Reduce spacing in the chat area.
+                </span>
+
+            </div>
+
+
+            <label class="nova-switch">
+
+                <input
+                    type="checkbox"
+                    id="compactLayoutToggle"
+                    onchange="toggleCompactLayout()"
+                >
+
+                <span class="nova-slider"></span>
+
+            </label>
+
+
+        </div>
+
+
+        <!-- THEME -->
+
+        <div class="settings-item">
+
+
+            <div class="settings-info">
+
+                <strong>
+                    Light mode
+                </strong>
+
+                <span>
+                    Switch between dark and light appearance.
+                </span>
+
+            </div>
+
+
+            <label class="nova-switch">
+
+                <input
+                    type="checkbox"
+                    id="lightModeToggle"
+                    onchange="toggleTheme()"
+                >
+
+                <span class="nova-slider"></span>
+
+            </label>
+
+
+        </div>
+
+
+        <!-- ACCOUNT -->
+
+        <div class="settings-item">
+
+
+            <div class="settings-info">
+
+                <strong>
+                    Account
+                </strong>
+
+                <span>
+                    Your NovaAI account is currently active.
+                </span>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<!-- ==========================================
+     LOGOUT MODAL
+=========================================== -->
+
+<div
+    id="logoutModal"
+    class="nova-modal-overlay"
+    onclick="closeModalOnOverlay(event, 'logoutModal')"
+>
+
+
+    <div
+        class="nova-modal"
+        onclick="event.stopPropagation()"
+    >
+
+
+        <div class="nova-modal-header">
+
+            <h2>
+                Logout
+            </h2>
+
+
+            <button
+                class="nova-close"
+                type="button"
+                onclick="closeModal('logoutModal')"
+            >
+
+                ×
+
+            </button>
+
+        </div>
+
+
+        <p>
+
+            Are you sure you want to logout from NovaAI?
+
+        </p>
+
+
+        <button
+            class="modal-button logout-modal-button"
+            type="button"
+            onclick="confirmLogout()"
+        >
+
+            Logout
+
+        </button>
+
+
+        <button
+            class="modal-button"
+            type="button"
+            onclick="closeModal('logoutModal')"
+        >
+
+            Cancel
+
+        </button>
+
+
+    </div>
+
+</div>
+
+
+<!-- ==========================================
+     CHAT JAVASCRIPT
+=========================================== -->
+
+<script
+    src="{{ url_for('static', filename='script.js') }}"
+></script>
+
+
+<!-- ==========================================
+     PROFILE / SETTINGS / THEME / LOGOUT
+=========================================== -->
+
+<script>
+
+
+/* ==========================================
+   APPLY SAVED THEME
+========================================== */
+
+function applySavedTheme() {
+
+    const savedTheme =
+        localStorage.getItem(
+            "novaAI_theme"
+        );
+
+    if (savedTheme === "light") {
+
+        document.body.classList.add(
+            "light-mode"
+        );
+
+    } else {
+
+        document.body.classList.remove(
+            "light-mode"
+        );
+
+    }
+
+}
+
+
+/* ==========================================
+   THEME TOGGLE
+========================================== */
+
+function toggleTheme() {
+
+    const toggle =
+        document.getElementById(
+            "lightModeToggle"
+        );
+
+    if (!toggle) {
+        return;
+    }
+
+    if (toggle.checked) {
+
+        document.body.classList.add(
+            "light-mode"
+        );
+
+        localStorage.setItem(
+            "novaAI_theme",
+            "light"
+        );
+
+    } else {
+
+        document.body.classList.remove(
+            "light-mode"
+        );
+
+        localStorage.setItem(
+            "novaAI_theme",
+            "dark"
+        );
+
+    }
+
+}
+
+
+/* ==========================================
+   PROFILE
+========================================== */
+
+async function openProfile() {
+
+    const modal =
+        document.getElementById(
+            "profileModal"
+        );
+
+    const nameElement =
+        document.getElementById(
+            "profileName"
+        );
+
+    const emailElement =
+        document.getElementById(
+            "profileEmail"
+        );
+
+    const avatarElement =
+        document.getElementById(
+            "profileAvatar"
+        );
+
+
+    modal.classList.add("active");
+
+
+    nameElement.textContent =
+        "Loading...";
+
+    emailElement.textContent =
+        "Loading...";
+
+
+    try {
+
+        const response =
+            await fetch("/me");
+
+
+        const data =
+            await response.json();
+
+
+        if (!data.logged_in) {
+
+            window.location.href =
+                "/login";
+
+            return;
+
+        }
+
+
+        const name =
+            data.name ||
+            "NovaAI User";
+
+
+        const email =
+            data.email ||
+            "";
+
+
+        nameElement.textContent =
+            name;
+
+
+        emailElement.textContent =
+            email;
+
+
+        avatarElement.textContent =
+            name
+                .charAt(0)
+                .toUpperCase();
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Profile Error:",
+            error
+        );
+
+
+        nameElement.textContent =
+            "Unable to load profile";
+
+
+        emailElement.textContent =
+            "";
+
+    }
+
+}
+
+
+/* ==========================================
+   SETTINGS
+========================================== */
+
+function openSettings() {
+
+    const modal =
+        document.getElementById(
+            "settingsModal"
+        );
+
+
+    const enterToggle =
+        document.getElementById(
+            "enterToSendToggle"
+        );
+
+
+    const compactToggle =
+        document.getElementById(
+            "compactLayoutToggle"
+        );
+
+
+    const lightToggle =
+        document.getElementById(
+            "lightModeToggle"
+        );
+
+
+    const savedEnter =
+        localStorage.getItem(
+            "novaAI_enterToSend"
+        );
+
+
+    const savedCompact =
+        localStorage.getItem(
+            "novaAI_compactLayout"
+        );
+
+
+    const savedTheme =
+        localStorage.getItem(
+            "novaAI_theme"
+        );
+
+
+    if (savedEnter !== null) {
+
+        enterToggle.checked =
+            savedEnter === "true";
+
+    }
+
+
+    if (savedCompact !== null) {
+
+        compactToggle.checked =
+            savedCompact === "true";
+
+    }
+
+
+    lightToggle.checked =
+        savedTheme === "light";
+
+
+    modal.classList.add(
+        "active"
+    );
+
+}
+
+
+/* ==========================================
+   CLOSE MODAL
+========================================== */
+
+function closeModal(modalId) {
+
+    const modal =
+        document.getElementById(
+            modalId
+        );
+
+
+    if (!modal) {
+
+        return;
+
+    }
+
+
+    modal.classList.remove(
+        "active"
+    );
+
+}
+
+
+/* ==========================================
+   CLOSE OUTSIDE
+========================================== */
+
+function closeModalOnOverlay(
+    event,
+    modalId
+) {
+
+    if (
+        event.target.id ===
+        modalId
+    ) {
+
+        closeModal(
+            modalId
+        );
+
+    }
+
+}
+
+
+/* ==========================================
+   ENTER TO SEND SETTING
+========================================== */
+
+function saveSettings() {
+
+    const toggle =
+        document.getElementById(
+            "enterToSendToggle"
+        );
+
+
+    localStorage.setItem(
+        "novaAI_enterToSend",
+        toggle.checked
+    );
+
+}
+
+
+/* ==========================================
+   COMPACT LAYOUT
+========================================== */
+
+function toggleCompactLayout() {
+
+    const toggle =
+        document.getElementById(
+            "compactLayoutToggle"
+        );
+
+
+    if (toggle.checked) {
+
+        document.body.classList.add(
+            "compact-mode"
+        );
+
+        localStorage.setItem(
+            "novaAI_compactLayout",
+            "true"
+        );
+
+    } else {
+
+        document.body.classList.remove(
+            "compact-mode"
+        );
+
+        localStorage.setItem(
+            "novaAI_compactLayout",
+            "false"
+        );
+
+    }
+
+}
+
+
+/* ==========================================
+   LOAD COMPACT SETTING
+========================================== */
+
+function loadCompactLayout() {
+
+    const savedCompact =
+        localStorage.getItem(
+            "novaAI_compactLayout"
+        );
+
+
+    if (
+        savedCompact ===
+        "true"
+    ) {
+
+        document.body.classList.add(
+            "compact-mode"
+        );
+
+    } else {
+
+        document.body.classList.remove(
+            "compact-mode"
+        );
+
+    }
+
+}
+
+
+/* ==========================================
+   LOGOUT
+========================================== */
+
+function logoutUser() {
+
+    const modal =
+        document.getElementById(
+            "logoutModal"
+        );
+
+
+    modal.classList.add(
+        "active"
+    );
+
+}
+
+
+/* ==========================================
+   CONFIRM LOGOUT
+========================================== */
+
+function confirmLogout() {
+
+    window.location.href =
+        "/logout";
+
+}
+
+
+/* ==========================================
+   ESCAPE KEY
+========================================== */
+
+document.addEventListener(
+    "keydown",
+    function (event) {
+
+        if (
+            event.key ===
+            "Escape"
+        ) {
+
+            closeModal(
+                "profileModal"
+            );
+
+            closeModal(
+                "settingsModal"
+            );
+
+            closeModal(
+                "logoutModal"
+            );
+
+        }
+
+    }
+);
+
+
+/* ==========================================
+   INITIALIZE UI SETTINGS
+========================================== */
+
+applySavedTheme();
+
+loadCompactLayout();
+
+</script>
+
+
+</body>
+
+</html>
